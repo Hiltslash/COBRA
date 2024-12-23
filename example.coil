@@ -8,3 +8,4 @@ show "var calcresult"
 cvar coolness 100
 show "coolness of this project:"
 show "var coolness"
+for 5 show "Hello, World!"

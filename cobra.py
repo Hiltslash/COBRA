@@ -40,12 +40,17 @@ def cvar(name, value):
 
 def takeinput(variable, message):
     variables[variable] = input(str(message))
+
+def forloop(times, command, *arguments):
+    for i in range(int(times)):
+        commands[command](*arguments)
 commands =  {
     "show" : show,
     "cvar" : cvar,
     "cal" : calculate,
     "clear" : clear,
     "input" : takeinput,
+    "for" : forloop,
 }
 
 if len(sys.argv) > 1:
@@ -76,6 +81,8 @@ def main():
                         show(arguments)
                     elif command.lower() == "input":
                         takeinput(*arguments)
+                    elif command.lower() == "for":
+                        forloop(*arguments)
                     elif command.lower() == "cvar":
                         cvar(*arguments)
                     elif command.lower() == "cal":
