@@ -1,8 +1,9 @@
 import os
+from os import system as syst
 import sys
 from time import sleep as wait
 import shlex
-def clear(): sys("clear")
+def clear(): syst("clear")
 variables = {"calresult" : 0}
 
 def calculate(numberone, operation, numbertwo):
@@ -37,11 +38,14 @@ def cvar(name, value):
         str(value)
     variables[name] = value
 
+def takeinput(variable, message):
+    variables[variable] = input(str(message))
 commands =  {
     "show" : show,
     "cvar" : cvar,
     "cal" : calculate,
-    "clear" : clear
+    "clear" : clear,
+    "input" : takeinput,
 }
 
 if len(sys.argv) > 1:
@@ -70,6 +74,8 @@ def main():
                 try:
                     if command.lower() == "show":
                         show(arguments)
+                    elif command.lower() == "input":
+                        takeinput(*arguments)
                     elif command.lower() == "cvar":
                         cvar(*arguments)
                     elif command.lower() == "cal":
