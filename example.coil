@@ -2,4 +2,7 @@ show "hello!"
 show "this is a test."
 show "have a good day!"
 cvar name beau
+cvar sum 10
+show "Sum of 5+5:"
+show "var sum"
 show "var name"

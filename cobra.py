@@ -11,6 +11,10 @@ def show(argument):
     else:
         print(argument)
 def cvar(name, value):
+    try:
+        int(value)
+    except ValueError:
+        str(value)
     variables[name] = value
 commands =  {
     "show" : show,
