@@ -1,2 +1,10 @@
-input name "enter your name"
+show "Hello, World!"
+input name "Enter your name."
+show "Hello,"
 show "var name"
+show "The result of 5 + 5:"
+cal 5 + 5 calcresult
+show "var calcresult"
+cvar coolness 100
+show "coolness of this project:"
+show "var coolness"
