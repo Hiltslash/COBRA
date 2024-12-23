@@ -11,3 +11,12 @@ have a good day/night!
 
 
 - Beau Davidson, December 23, 2024, 9:22 AM.
+
+
+some things:
+declare variables with cvar name value
+print things with show ""
+print variables with show "var varname"
+File extension must be .coil for cobra
+
+yes that's kinda the entire documentation
