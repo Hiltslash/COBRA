@@ -1,8 +1,8 @@
-show "hello!"
-show "this is a test."
-show "have a good day!"
-cvar name beau
-cvar sum 10
-show "Sum of 5+5:"
-show "var sum"
+show "Hello, World!"
+show "This is a test!"
+show "My name is:"
+cvar name Beau
 show "var name"
+show "RESLULT OF 50 times 3"
+cal 50 * 3 result
+show "var result"

@@ -2,7 +2,26 @@ import os
 import sys
 from time import sleep as wait
 import shlex
-variables = {}
+def clear(): sys("clear")
+variables = {"calresult" : 0}
+
+def calculate(numberone, operation, numbertwo):
+    try:
+        numberone = int(numberone)
+        numbertwo = int(numbertwo)
+        if operation == "*":
+            return numberone * numbertwo
+        elif operation == "/":
+            return numberone / numbertwo
+        elif operation == "+":
+            return numberone + numbertwo
+        elif operation == "-":
+            return numberone - numbertwo
+        elif operation == "#":
+            return numberone ** numbertwo
+    except ValueError:
+        print("VALUE ERROR: PLEASE PROVIDE TWO INTEGERS")
+        raise ValueError
 
 def show(argument):
     if "var" in argument:
@@ -10,16 +29,21 @@ def show(argument):
         print(variables[argument])
     else:
         print(argument)
+
 def cvar(name, value):
     try:
         int(value)
     except ValueError:
         str(value)
     variables[name] = value
+
 commands =  {
     "show" : show,
     "cvar" : cvar,
+    "cal" : calculate,
+    "clear" : clear
 }
+
 if len(sys.argv) > 1:
     filename = sys.argv[1]
 else:
@@ -46,8 +70,16 @@ def main():
                 try:
                     if command.lower() == "show":
                         show(arguments)
-                    if command.lower() == "cvar":
+                    elif command.lower() == "cvar":
                         cvar(*arguments)
+                    elif command.lower() == "cal":
+                        # Calculate the result using the first three arguments
+                        calresult = calculate(*arguments[:3])
+                        # If a fourth argument (variable name) is provided, assign the result to that variable
+                        if len(arguments) > 3:
+                            variables[arguments[3]] = calresult
+                    elif command.lower() == "clear":
+                        clear()
                 except TypeError as e:
                     raise TypeError
             else:
