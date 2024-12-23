@@ -1,0 +1,5 @@
+show "hello!"
+show "this is a test."
+show "have a good day!"
+cvar name beau
+show "var name"

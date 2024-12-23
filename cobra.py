@@ -2,11 +2,19 @@ import os
 import sys
 from time import sleep as wait
 import shlex
+variables = {}
 
 def show(argument):
-    print(argument)
+    if "var" in argument:
+        dontuse, argument = parse(argument)
+        print(variables[argument])
+    else:
+        print(argument)
+def cvar(name, value):
+    variables[name] = value
 commands =  {
-    "show" : show
+    "show" : show,
+    "cvar" : cvar,
 }
 if len(sys.argv) > 1:
     filename = sys.argv[1]
@@ -34,6 +42,8 @@ def main():
                 try:
                     if command.lower() == "show":
                         show(arguments)
+                    if command.lower() == "cvar":
+                        cvar(*arguments)
                 except TypeError as e:
                     raise TypeError
             else:
