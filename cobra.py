@@ -17,16 +17,25 @@ else:
 def parse(line):
     shlexedline = shlex.split(line)
     command = shlexedline[0]
-    arguments = shlexedline[1:]
+    try:
+        if shlexedline[2]:
+            arguments = shlexedline[1:]
+        else:
+            arguments = shlexedline[1]
+    except IndexError:
+        arguments = shlexedline[1]
     return command, arguments
 
 def main():
-    print("Opening script....")
     with open(filename, "r") as file:
         for line in file:
             command, arguments = parse(line)
             if command in commands:
-                print("good job")
+                try:
+                    if command.lower() == "show":
+                        show(arguments)
+                except TypeError as e:
+                    raise TypeError
             else:
                 print(f"Syntax error: {command} command not found in base.")
 
