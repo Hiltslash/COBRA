@@ -30,6 +30,9 @@ clear
 
 wait
 
+goto
+
+
 declare variables with cvar name value
 
 print things with show ""
@@ -46,7 +49,8 @@ do a for loop like this: for times command arguments
 
 wait for a while like this: wait seconds
 
-make an infinite loop like this: for 10 for 10 for 10 for 10 for 10 for 10 show "this will loop forever :D"
+Go to a specific line like this: goto linenumber
+
 if statements like this: if condition exresult command argument(s)
 
 Another note: when clearing the screen with clear, you have to put something after it. anything, it dosent matter.

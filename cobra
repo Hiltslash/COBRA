@@ -7,6 +7,8 @@ from time import sleep as wait
 import shlex
 def clear(): syst("clear")
 variables = {"calresult" : 0}
+current_line = 0
+labels = {}
 def checkvar(string):
     if "var" in string and type(string) == str:
         donotuse, important = parse(string)
@@ -23,7 +25,8 @@ def ifcondition(condition, exresult, thencommand, *thenarguments):
             commands[thencommand](*thenarguments)
     else:
         pass
-
+def goto():
+    pass
 
 def calculate(numberone, operation, numbertwo, storevariable):
     numberone = checkvar(numberone)
@@ -80,7 +83,8 @@ commands =  {
     "input" : takeinput,
     "for" : forloop,
     "wait" : waittime,
-    "if" : ifcondition
+    "if" : ifcondition,
+    "goto" : goto
 }
 
 if len(sys.argv) > 1:
@@ -92,45 +96,58 @@ if not filename.endswith('.coil'):
     print("Error: Cobra scripts must have a .coil extension.")
     sys.exit(1)
 
-def parse(line):
+def parse(line, linenum):
     if len(line) > 0:
-        shlexedline = shlex.split(line)
-        command = shlexedline[0]
-        try:
-            if shlexedline[2]:
-                arguments = shlexedline[1:]
-            else:
+        if line[0] == ":":
+            newlabel = shlex.split(line[1:])
+            labels[newlabel] = linenum
+        else:
+            shlexedline = shlex.split(line)
+            command = shlexedline[0]
+            try:
+                if shlexedline[2]:
+                    arguments = shlexedline[1:]
+                else:
+                    arguments = shlexedline[1]
+            except IndexError:
                 arguments = shlexedline[1]
-        except IndexError:
-            arguments = shlexedline[1]
-        return command, arguments
+            return command, arguments
 
 def main():
+    global current_line
     with open(filename, "r") as file:
-        for line in file:
-            if line:
-                command, arguments = parse(line)
-                if command in commands:
-                    try:
-                        if command.lower() == "show":
-                            show(arguments)
-                        elif command.lower() == "input":
-                            takeinput(*arguments)
-                        elif command.lower() == "for":
-                            forloop(*arguments)
-                        elif command.lower() == "wait":
-                            waittime(arguments)
-                        elif command.lower() == "if":
-                            ifcondition(*arguments)
-                        elif command.lower() == "cvar":
-                            cvar(*arguments)
-                        elif command.lower() == "cal":
-                            calculate(*arguments)
-                        elif command.lower() == "clear":
-                            clear()
-                    except TypeError as e:
-                        raise TypeError
-                else:
-                    print(f"Syntax error: {command} command not found in base.")
+        scriptlines = file.readlines()
+    while current_line < len(scriptlines):
+        line = scriptlines[current_line].strip()
+        if not line or line.startswith(":"):
+            current_line += 1
+            continue
 
+        command, arguments = parse(line, current_line)
+        if command in commands:
+            try:
+                if command.lower() == "show":
+                    show(arguments)
+                elif command.lower() == "input":
+                     takeinput(*arguments)
+                elif command.lower() == "for":
+                    forloop(*arguments)
+                elif command.lower() == "wait":
+                    waittime(arguments)
+                elif command.lower() == "if":
+                    ifcondition(*arguments)
+                elif command.lower() == "cvar":
+                    cvar(*arguments)
+                elif command.lower() == "cal":
+                     calculate(*arguments)
+                elif command.lower() == "clear":
+                        clear()
+                elif command.lower() == "goto":
+                    current_line = int(arguments)
+                    continue
+            except TypeError as e:
+                raise TypeError
+        else:
+            print(f"Syntax error: {command} command not found in base.")
+        current_line += 1
 main()
