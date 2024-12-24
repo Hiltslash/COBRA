@@ -12,7 +12,7 @@ def checkvar(string):
         return importants
     else:
         return string
-
+#Comment on line 15
 def ifcondition(condition, exresult, thencommand, *thenarguments):
     conditionvar = checkvar(condition)
     exresultvar = checkvar(exresult)
@@ -78,6 +78,9 @@ if len(sys.argv) > 1:
     filename = sys.argv[1]
 else:
     print("Error: No filename provided.")
+    sys.exit(1)
+if not filename.endswith('.coil'):
+    print("Error: Cobra scripts must have a .coil extension.")
     sys.exit(1)
 
 def parse(line):

@@ -22,7 +22,13 @@ cal (computes calculations)
 input (takes input from the user)
 
 for (repeats a command a number of times)
+
+
 if (control flow)
+
+clear
+
+wait
 
 declare variables with cvar name value
 
@@ -38,8 +44,12 @@ File extension must be .coil for cobra
 
 do a for loop like this: for times command arguments
 
+wait for a while like this: wait seconds
+
 make an infinite loop like this: for 10 for 10 for 10 for 10 for 10 for 10 show "this will loop forever :D"
 if statements like this: if condition exresult command argument(s)
+
+Another note: when clearing the screen with clear, you have to put something after it. anything, it dosent matter.
 
 
 yes that's kinda the entire documentation
