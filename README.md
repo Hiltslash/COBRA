@@ -1,5 +1,5 @@
 # COBRA
-Custom Programming language built in python. just practicing Can you even imagine how slow it is?
+Custom Programming language built in python. Can you even imagine how slow it is?
 
 i'm bored
 that's the only reason this exists.
