@@ -5,6 +5,23 @@ from time import sleep as wait
 import shlex
 def clear(): syst("clear")
 variables = {"calresult" : 0}
+def checkvar(string):
+    if "var" in string and type(string) == str:
+        donotuse, important = parse(string)
+        importants = variables[important]
+        return importants
+    else:
+        return string
+
+def ifcondition(condition, exresult, thencommand, *thenarguments):
+    conditionvar = checkvar(condition)
+    exresultvar = checkvar(exresult)
+    if str(conditionvar) == str(exresultvar):
+        if thencommand in commands:
+            commands[thencommand](*thenarguments)
+    else:
+        pass
+
 
 def calculate(numberone, operation, numbertwo):
     try:
@@ -24,6 +41,8 @@ def calculate(numberone, operation, numbertwo):
         print("VALUE ERROR: PLEASE PROVIDE TWO INTEGERS")
         raise ValueError
 
+def waittime(seconds):
+    wait(int(seconds))
 def show(argument):
     if "var" in argument:
         dontuse, argument = parse(argument)
@@ -51,6 +70,8 @@ commands =  {
     "clear" : clear,
     "input" : takeinput,
     "for" : forloop,
+    "wait" : waittime,
+    "if" : ifcondition
 }
 
 if len(sys.argv) > 1:
@@ -74,28 +95,33 @@ def parse(line):
 def main():
     with open(filename, "r") as file:
         for line in file:
-            command, arguments = parse(line)
-            if command in commands:
-                try:
-                    if command.lower() == "show":
-                        show(arguments)
-                    elif command.lower() == "input":
-                        takeinput(*arguments)
-                    elif command.lower() == "for":
-                        forloop(*arguments)
-                    elif command.lower() == "cvar":
-                        cvar(*arguments)
-                    elif command.lower() == "cal":
-                        # Calculate the result using the first three arguments
-                        calresult = calculate(*arguments[:3])
-                        # If a fourth argument (variable name) is provided, assign the result to that variable
-                        if len(arguments) > 3:
-                            variables[arguments[3]] = calresult
-                    elif command.lower() == "clear":
-                        clear()
-                except TypeError as e:
-                    raise TypeError
-            else:
-                print(f"Syntax error: {command} command not found in base.")
+            if line:
+                command, arguments = parse(line)
+                if command in commands:
+                    try:
+                        if command.lower() == "show":
+                            show(arguments)
+                        elif command.lower() == "input":
+                            takeinput(*arguments)
+                        elif command.lower() == "for":
+                            forloop(*arguments)
+                        elif command.lower() == "wait":
+                            waittime(arguments)
+                        elif command.lower() == "if":
+                            ifcondition(*arguments)
+                        elif command.lower() == "cvar":
+                            cvar(*arguments)
+                        elif command.lower() == "cal":
+                            # Calculate the result using the first three arguments
+                            calresult = calculate(*arguments[:3])
+                            # If a fourth argument (variable name) is provided, assign the result to that variable
+                            if len(arguments) > 3:
+                                variables[arguments[3]] = calresult
+                        elif command.lower() == "clear":
+                            clear()
+                    except TypeError as e:
+                        raise TypeError
+                else:
+                    print(f"Syntax error: {command} command not found in base.")
 
 main()
