@@ -52,4 +52,12 @@ if statements like this: if condition exresult command argument(s)
 Another note: when clearing the screen with clear, you have to put something after it. anything, it dosent matter.
 
 
+
+
+## Setup
+1. Clone the repository
+2. Make the script executable: chmod -x cobra
+3. Add repo to your path:  export PATH="/path/to/cobra:$PATH" Add it to your ~/.zshrc or ~/.bashrc to make it permenant
+4. Test it with "cobra example.coil"
+
 yes that's kinda the entire documentation
