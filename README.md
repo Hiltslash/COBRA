@@ -65,3 +65,4 @@ Another note: when clearing the screen with clear, you have to put something aft
 4. Test it with "cobra example.coil"
 
 yes that's kinda the entire documentation
+*
