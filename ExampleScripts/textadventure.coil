@@ -1,0 +1,8 @@
+show "Welcome to my text adventure game, built in cobra!"
+wait 1
+clear s
+input choiceone "Do you go up the ladder or down the ladder?"
+if "var choiceone" "up" show "You went up the ladder"
+if "var choiceone" "down" show "You went down the ladder, and died."
+wait 2
+clear sc
