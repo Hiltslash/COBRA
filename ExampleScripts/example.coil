@@ -9,7 +9,8 @@ cvar coolness 100
 show "coolness of this project:"
 show "var coolness"
 for 5 show "Hello, World!"
-if "var name" "Beau" show "No way, you're me!"
+if "var name" "Beau"
+show "No way, you're me!"
 show "That's Crazy!"
 :end
-show "end."
+show "this goes after the if statement."

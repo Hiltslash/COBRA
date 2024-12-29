@@ -9,6 +9,8 @@ def clear(): syst("clear")
 variables = {"calresult" : 0}
 current_line = 0
 labels = {}
+ifmet = False
+inifbrackets = False
 def checkvar(string):
     if "var" in string and type(string) == str:
         donotuse, important = parse(string)
@@ -17,14 +19,17 @@ def checkvar(string):
     else:
         return string
 #Comment on line 15
-def ifcondition(condition, exresult, thencommand, *thenarguments):
+def ifcondition(condition, exresult):
     conditionvar = checkvar(condition)
     exresultvar = checkvar(exresult)
+    global ifmet
+    global inifbrackets
     if str(conditionvar) == str(exresultvar):
-        if thencommand in commands:
-            commands[thencommand](*thenarguments)
+        ifmet = True
+        inifbrackets = True
     else:
-        pass
+        ifmet = False
+        inifbrackets = True
 def goto():
     pass
 
@@ -96,11 +101,10 @@ if not filename.endswith('.coil'):
     print("Error: Cobra scripts must have a .coil extension.")
     sys.exit(1)
 
-def parse(line, linenum):
+def parse(line):
     if len(line) > 0:
         if line[0] == ":":
-            newlabel = shlex.split(line[1:])
-            labels[newlabel] = linenum
+            pass # This cannot happen, unless the script has an unidentified label.
         else:
             shlexedline = shlex.split(line)
             command = shlexedline[0]
@@ -115,15 +119,24 @@ def parse(line, linenum):
 
 def main():
     global current_line
+    global inifbrackets
+    global ifmet
     with open(filename, "r") as file:
         scriptlines = file.readlines()
     while current_line < len(scriptlines):
         line = scriptlines[current_line].strip()
-        if not line or line.startswith(":"):
+        if not line:
+            current_line += 1
+            continue
+        if line.lower() == ":end":
+            inifbrackets = False
+            current_line += 1
+            continue
+        if inifbrackets and not ifmet:
             current_line += 1
             continue
 
-        command, arguments = parse(line, current_line)
+        command, arguments = parse(line)
         if command in commands:
             try:
                 if command.lower() == "show":
