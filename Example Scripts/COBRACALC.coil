@@ -1,9 +1,0 @@
-show "Welcome to my calculator!"
-input numberone "Input a number"
-clear s
-input numbertwo "Input another number"
-clear s
-input operation "What operation?"
-cal "var numberone" "var operation" "var numbertwo" calcresult 
-show "THE RESULT IS:"
-show "var calcresult"
