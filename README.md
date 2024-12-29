@@ -51,9 +51,11 @@ wait for a while like this: wait seconds
 
 Go to a specific line like this: goto linenumber
 
-if statements like this: if condition exresult command argument(s)
+if statements like this: if "var name" "Beau"
 
-Another note: when clearing the screen with clear, you have to put something after it. anything, it dosent matter.
+end if statements with :end.
+
+*Another note: when clearing the screen with clear, you have to put something after it. anything, it dosent matter.*
 
 
 
