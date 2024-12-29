@@ -1,0 +1,3 @@
+([('cobrahub',
+   '/Users/beaudavidson/Documents/GitHub/COBRA/Cobrahub/dist/cobrahub',
+   'EXECUTABLE')],)
