@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
+from setproctitle import setproctitle
 
+setproctitle("Cobra")
 import os
 from os import system as syst
 import sys
