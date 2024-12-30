@@ -3,6 +3,8 @@ from setproctitle import setproctitle
 
 setproctitle("Cobra")
 import os
+import tkinter as Tk
+from tkinter import messagebox
 import subprocess
 from os import system as syst
 import sys
@@ -24,6 +26,19 @@ def checkvar(string):
     else:
         return string
 #Comment on line 15
+def sysdial(message, type, resultstore):
+    if type == "info":
+        messagebox.showinfo(filename, message)
+    elif type == "warning":
+        messagebox.showwarning(filename, message)
+    elif type == "error":
+        messagebox.showerror(filename, message)
+    elif type == "ayn":
+        variables[resultstore] = messagebox.askyesno(filename, message)
+    elif type == "askok":
+        variables[resultstore] = messagebox.askokcancel(filename, message)
+    else:
+        raise SyntaxError("INCORRECT SYSTEMDIAL TYPE")
 def ifcondition(condition, exresult):
     conditionvar = checkvar(condition)
     exresultvar = checkvar(exresult)
@@ -66,11 +81,8 @@ def calculate(numberone, operation, numbertwo, storevariable):
 def waittime(seconds):
     wait(int(seconds))
 def show(argument):
-    if "var" in argument:
-        dontuse, argument = parse(argument)
-        print(variables[argument])
-    else:
-        print(argument)
+    argument = checkvar(argument)
+    print(argument)
 
 def cvar(name, value):
     try:
@@ -95,7 +107,8 @@ commands =  {
     "wait" : waittime,
     "if" : ifcondition,
     "goto" : goto,
-    "systemsay" : say
+    "systemsay" : say,
+    "systemdial" : sysdial
 }
 
 if len(sys.argv) > 1:
@@ -166,6 +179,8 @@ def main():
                 elif command.lower() == "goto":
                     current_line = int(arguments)
                     continue
+                elif command.lower() == "systemdial":
+                    sysdial(*arguments)
             except TypeError as e:
                 raise TypeError
         else:

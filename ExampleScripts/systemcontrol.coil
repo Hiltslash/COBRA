@@ -1,0 +1,2 @@
+systemdial "Hello. Do you want to die?" "ayn" "result"
+show "var result"
