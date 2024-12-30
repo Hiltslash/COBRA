@@ -1,6 +1,9 @@
 import tkinter as Tk
 from tkinter import messagebox, filedialog
 import subprocess
+from setproctitle import setproctitle
+
+setproctitle("Cobrahub")
 
 def new_file():
     """Create a new Cobra file with default content."""
@@ -20,7 +23,7 @@ def open_file_dialog():
     )
     if file_path:
         try:
-            subprocess.run(["cobra", file_path], check=True)
+            subprocess.run(["cobra", file_path])
         except FileNotFoundError:
             messagebox.showerror("Error", "Cobra command not found. Make sure it is installed and in your PATH.")
         except Exception as e:
