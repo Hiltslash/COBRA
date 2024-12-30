@@ -32,6 +32,10 @@ wait
 
 goto
 
+systemsay
+
+systemdial
+
 
 declare variables with cvar name value
 
@@ -55,6 +59,9 @@ if statements like this: if "var name" "Beau"
 
 end if statements with :end.
 
+make your computer talk like this: systemsay "Message"
+
+create a popup like this: systemdial "Message" "type" "result variable" (put none if it's not yes/no or ok)
 *Another note: when clearing the screen with clear, you have to put something after it. anything, it dosent matter.*
 
 
