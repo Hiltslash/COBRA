@@ -208,6 +208,9 @@ def main():
             cfunccounter += 1
             current_line += 1
             continue
+        elif line.startswith("//"):
+            current_line += 1
+            continue
 
         command, arguments = parse(line)
         if command in commands or command in cfunctionnames:
