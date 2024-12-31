@@ -13,9 +13,17 @@ import shlex
 def clear(): syst("clear")
 variables = {"calresult" : 0}
 current_line = 0
-labels = {}
+cfunclinenums = {}
+cfuncargs = {}
+cfunclines = {}
+cfunctionnames = []
 ifmet = False
+isdefiningfunc = False
 inifbrackets = False
+cfunccounter = 0
+
+
+#ALL THE COMMANDS
 def say(argument):
     subprocess.run(["say", argument])
 def checkvar(string):
@@ -97,6 +105,25 @@ def takeinput(variable, message):
 def forloop(times, command, *arguments):
     for i in range(int(times)):
         commands[command](*arguments)
+
+
+#Unfortunatley, right now your custom functions can only have 1 argument becuase
+#i don't know how to do it right lol
+def createfunc(funcname, neededarg, linenum):
+    try:
+        int(linenum)
+        cfunclinenums[funcname] = linenum
+        cfuncargs[funcname] = neededarg
+        global isdefiningfunc
+        isdefiningfunc = True
+        cfunctionnames.append(funcname)
+        cfunclines[funcname] = []
+    except ValueError:
+        raise SyntaxError("PROVIDED LINENUMBER WHEN DEFINING FUNCTION MUST BE INTEGER!")
+
+
+
+#List of all valid commands
 commands =  {
     "show" : show,
     "cvar" : cvar,
@@ -108,9 +135,13 @@ commands =  {
     "if" : ifcondition,
     "goto" : goto,
     "systemsay" : say,
-    "systemdial" : sysdial
+    "systemdial" : sysdial,
+    "func" : createfunc
 }
 
+
+
+#Checks the filename
 if len(sys.argv) > 1:
     filename = sys.argv[1]
 else:
@@ -120,6 +151,16 @@ if not filename.endswith('.coil'):
     print("Error: Cobra scripts must have a .coil extension.")
     sys.exit(1)
 
+def execfunc(function, functionname, argumenti):
+    for line in function:
+        command, arguments = parse(line)
+        if "^" in arguments:
+            arguments = argumenti
+        if type(arguments) == list:
+            commands[command](*arguments)
+        else:
+            commands[command](arguments)
+#Main parser of the line of code
 def parse(line):
     if len(line) > 0:
         if line[0] == ":":
@@ -136,10 +177,14 @@ def parse(line):
                 arguments = shlexedline[1]
             return command, arguments
 
+
+#Main function that iterates through every line in the script and performes the commands
 def main():
     global current_line
     global inifbrackets
     global ifmet
+    global isdefiningfunc
+    global cfunccounter
     with open(filename, "r") as file:
         scriptlines = file.readlines()
     while current_line < len(scriptlines):
@@ -147,16 +192,25 @@ def main():
         if not line:
             current_line += 1
             continue
-        if line.lower() == ":end":
+        elif line.lower() == ":end":
             inifbrackets = False
             current_line += 1
             continue
-        if inifbrackets and not ifmet:
+        elif line.lower() == ":endef":
+            isdefiningfunc = False
+            current_line += 1
+            continue
+        elif inifbrackets and not ifmet:
+            current_line += 1
+            continue
+        elif isdefiningfunc:
+            cfunclines[cfunctionnames[cfunccounter]].append(line)
+            cfunccounter += 1
             current_line += 1
             continue
 
         command, arguments = parse(line)
-        if command in commands:
+        if command in commands or command in cfunctionnames:
             try:
                 if command.lower() == "show":
                     show(arguments)
@@ -181,6 +235,12 @@ def main():
                     continue
                 elif command.lower() == "systemdial":
                     sysdial(*arguments)
+                elif command.lower() == "func":
+                    createfunc(*arguments)
+                elif command.lower() in cfunctionnames:
+                    funclines = cfunclines[command.lower()]
+                    funcname = command.lower()
+                    execfunc(funclines, funcname, arguments)
             except TypeError as e:
                 raise TypeError
         else:

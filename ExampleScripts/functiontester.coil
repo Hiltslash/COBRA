@@ -1,0 +1,5 @@
+func "greet" "name" 1
+show "Hello, User!"
+:endef
+
+greet "^Beau"

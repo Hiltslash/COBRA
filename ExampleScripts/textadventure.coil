@@ -2,7 +2,17 @@ show "Welcome to my text adventure game, built in cobra!"
 wait 1
 clear s
 input choiceone "Do you go up the ladder or down the ladder?"
-if "var choiceone" "up" show "You went up the ladder"
-if "var choiceone" "down" show "You went down the ladder, and died."
+if "var choiceone" "1"
+show "You go up the ladder."
+wait 1
+clear s
+show "You find yourself at the top of the mountian."
+input choicetwo "Do you attempt to go down the mountian carefully, or go back down the ladder and try to find another way?"
+if "var choicetwo" "2"
+show "You descended back down, and found that you were inside a cavern."
 wait 2
 clear sc
+show "Uh oh! A monster appeard and ate your innards. You died!"
+wait 5
+clear sc
+:end

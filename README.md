@@ -59,9 +59,16 @@ if statements like this: if "var name" "Beau"
 
 end if statements with :end.
 
+oh my goodness functions were tedious to make
+
+write them like this: func functioname arguments linenumber
+
+its the ugliest code i've ever written
+
 make your computer talk like this: systemsay "Message"
 
 create a popup like this: systemdial "Message" "type" "result variable" (put none if it's not yes/no or ok)
+
 *Another note: when clearing the screen with clear, you have to put something after it. anything, it dosent matter.*
 
 
