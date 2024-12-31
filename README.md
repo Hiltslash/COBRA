@@ -67,11 +67,14 @@ create a popup like this: systemdial "Message" "type" "result variable" (put non
 
 
 
-## Setup
+## Setup for mac
 1. Clone the repository
-2. Make the script executable: chmod -x cobra
-3. Add repo to your path:  export PATH="/path/to/cobra:$PATH" Add it to your ~/.zshrc or ~/.bashrc to make it permenant
-4. Test it with "cobra example.coil"
+2. Make sure you have python3.13.1 installed
+3. Navigate to the repo in terminal
+4. run pip3 install -r requirements.txt
+5. Make the script executable: chmod -x cobra
+6. Add repo to your path:  export PATH="/path/to/cobra:$PATH" Add it to your ~/.zshrc or ~/.bashrc to make it permenant
+7. Test it with "cobra example.coil"
 
 yes that's kinda the entire documentation
 *
