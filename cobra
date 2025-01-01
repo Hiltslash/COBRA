@@ -106,6 +106,24 @@ def forloop(times, command, *arguments):
     for i in range(int(times)):
         commands[command](*arguments)
 
+def whileloop(inone, coperator, intwo, command, *arguments):
+    if coperator == "==":
+        while inone == intwo:
+            if command in commands:
+                commands[command](*arguments)
+    elif coperator == ">":
+        while inone > intwo:
+            if command in commands:
+                commands[command](*arguments)
+    elif coperator == "<":
+        while inone < intwo:
+            if command in commands:
+                commands[command](*arguments)
+    elif coperator == "<":
+        while inone < intwo:
+            if command in commands:
+                commands[command](*arguments)
+
 
 #Unfortunatley, right now your custom functions can only have 1 argument becuase
 #i don't know how to do it right lol
@@ -136,7 +154,8 @@ commands =  {
     "goto" : goto,
     "systemsay" : say,
     "systemdial" : sysdial,
-    "func" : createfunc
+    "func" : createfunc,
+    "while" : whileloop
 }
 
 
@@ -240,10 +259,13 @@ def main():
                     sysdial(*arguments)
                 elif command.lower() == "func":
                     createfunc(*arguments)
+                elif command.lower() == "while":
+                    whileloop(*arguments)
                 elif command.lower() in cfunctionnames:
                     funclines = cfunclines[command.lower()]
                     funcname = command.lower()
                     execfunc(funclines, funcname, arguments)
+
             except TypeError as e:
                 raise TypeError
         else:

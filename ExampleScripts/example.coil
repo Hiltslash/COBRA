@@ -16,3 +16,9 @@ systemdial "How did you know my name? It's not like i put it all over my code." 
 systemsay "What on Earth?"
 :end
 show "this goes after the if statement."
+show "The Integer num will go up until it reaches 64."
+wait 3
+clear s
+cvar "num" 0
+while "var num" "<" 64 cal "var num" "+" 1 "num"
+show "var num"

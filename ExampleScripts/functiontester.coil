@@ -1,5 +1,6 @@
 func "greet" "name" 1
-show "Hello, User!"
+show "Hello," 
+show "^var name"
 :endef
-
-greet "^Beau"
+input "name" "Input your name"
+greet "^var name"
