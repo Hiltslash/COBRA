@@ -20,5 +20,3 @@ show "The Integer num will go up until it reaches 64."
 wait 3
 clear s
 cvar "num" 0
-while "var num" "<" 64 cal "var num" "+" 1 "num"
-show "var num"

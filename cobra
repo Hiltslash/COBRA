@@ -3,7 +3,7 @@ from setproctitle import setproctitle
 
 setproctitle("Cobra")
 import os
-import tkinter as Tk
+import tkinter as tk
 from tkinter import messagebox
 import subprocess
 from os import system as syst
@@ -24,6 +24,9 @@ cfunccounter = 0
 
 
 #ALL THE COMMANDS
+def makewindow(dx, dy, title):
+    TKINTERWINDOW = tk.Tk()
+    TKINTERWINDOW.title(title)
 def say(argument):
     subprocess.run(["say", argument])
 def checkvar(string):
