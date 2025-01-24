@@ -254,6 +254,7 @@ def main():
                 elif command.lower() == "clear":
                         clear()
                 elif command.lower() == "systemsay":
+                    arguments = checkvar(arguments)
                     say(arguments)
                 elif command.lower() == "goto":
                     current_line = int(arguments)
