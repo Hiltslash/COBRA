@@ -141,6 +141,13 @@ def createfunc(funcname, neededarg, linenum):
     except ValueError:
         raise SyntaxError("PROVIDED LINENUMBER WHEN DEFINING FUNCTION MUST BE INTEGER!")
 
+def createfile(name):
+    with open(name, "w") as file:
+        file.write("")
+def appendtofile(name, *content):
+    with open(name, "a") as file:
+        for line in content:
+            file.write(line + "\n")
 
 
 #List of all valid commands
@@ -157,7 +164,9 @@ commands =  {
     "systemsay" : say,
     "systemdial" : sysdial,
     "func" : createfunc,
-    "while" : whileloop
+    "while" : whileloop,
+    "cfile" : createfile,
+    "atf" : appendtofile
 }
 
 
@@ -264,6 +273,10 @@ def main():
                     createfunc(*arguments)
                 elif command.lower() == "while":
                     whileloop(*arguments)
+                elif command.lower() == "cfile":
+                    createfile(arguments)
+                elif command.lower() == "atf":
+                    appendtofile(*arguments)
                 elif command.lower() in cfunctionnames:
                     funclines = cfunclines[command.lower()]
                     funcname = command.lower()

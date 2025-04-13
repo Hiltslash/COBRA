@@ -1,0 +1,2 @@
+cfile "duplicate"
+atf "duplicate" "cfile duplicate" "atf duplicate cflie duplicate"
