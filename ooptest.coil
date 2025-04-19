@@ -1,0 +1,4 @@
+show "Hello, World!"
+cvar myvar str 5
+show @myvar
+calc 10 + 4

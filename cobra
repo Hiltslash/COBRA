@@ -2,7 +2,8 @@
 from setproctitle import setproctitle
 
 setproctitle("Cobra")
-import tkinter as tk
+import os
+import tkinter as Tk
 from tkinter import messagebox
 import subprocess
 from os import system as syst
@@ -21,11 +22,58 @@ isdefiningfunc = False
 inifbrackets = False
 cfunccounter = 0
 
+class command:
+    def __init__(self, name, function, argmax, argmin):
+        self.name = name
+        self.function = function
+        self.argmax = argmax
+        self.argmin = argmin
+        
+        def run(self, *arguments):
+            if len(*arguments) >= argmin and len(*arguments) <= argmax:
+                self.function(*arguments)
+            elif len(*arguments) <= argmin:
+                raise SyntaxError(f"{self.name} command takes at minimum {self.argmin} arguments, {len(*arguments)} provided.")
+            else:
+                raise SyntaxError(f"{self.name} command takes at max {self.argmax} arguments, {len(*arguments)} provided.")
+class mlinecommand(command):
+    def __init__(self, name: str, function: function, argmax: int, argmin: int, endlabel: str, inb: bool = None):
+        super().__init__(name, function, argmax, argmin)
+        self.endlabel = endlabel
+        self.inb = inb
+        def minimain(self, *arguments):
+            global current_line
+            global scriptlines
+            line = scriptlines[current_line]
+            while self.inb == True:
+                if not line.startswith("//") or not line.startswith(":"):
+                    command, arguments = parse(line)
+                    if command in commands and type(command) == command:
+                        if command.maxargs > 1:
+                            commands[command](*arguments)
+                        else:
+                            commands[command](arguments)
+                        current_line += 1
+                        continue
+                    else:
+                        raise SyntaxError("im not in the mood to write a syntax error ):")
+                elif line.startswith(":"):
+                    if line.lower() == ":end":
+                        self.inb = False
+                        current_line += 1
+                        continue
+                
+
+        def run(self, *arguments):
+            if len(*arguments) >= argmin and len(*arguments) <= argmax:
+                self.function(*arguments)
+            elif len(*arguments) <= argmin:
+                raise SyntaxError(f"{self.name} command takes at minimum {self.argmin} arguments, {len(*arguments)} provided.")
+            else:
+                raise SyntaxError(f"{self.name} command takes at max {self.argmax} arguments, {len(*arguments)} provided.")
+
 
 #ALL THE COMMANDS
-def makewindow(dx, dy, title):
-    TKINTERWINDOW = tk.Tk()
-    TKINTERWINDOW.title(title)
 def say(argument):
     subprocess.run(["say", argument])
 def checkvar(string):
@@ -141,13 +189,6 @@ def createfunc(funcname, neededarg, linenum):
     except ValueError:
         raise SyntaxError("PROVIDED LINENUMBER WHEN DEFINING FUNCTION MUST BE INTEGER!")
 
-def createfile(name):
-    with open(name, "w") as file:
-        file.write("")
-def appendtofile(name, *content):
-    with open(name, "a") as file:
-        for line in content:
-            file.write(line + "\n")
 
 
 #List of all valid commands
@@ -164,9 +205,7 @@ commands =  {
     "systemsay" : say,
     "systemdial" : sysdial,
     "func" : createfunc,
-    "while" : whileloop,
-    "cfile" : createfile,
-    "atf" : appendtofile
+    "while" : whileloop
 }
 
 
@@ -262,7 +301,6 @@ def main():
                 elif command.lower() == "clear":
                         clear()
                 elif command.lower() == "systemsay":
-                    arguments = checkvar(arguments)
                     say(arguments)
                 elif command.lower() == "goto":
                     current_line = int(arguments)
@@ -273,10 +311,6 @@ def main():
                     createfunc(*arguments)
                 elif command.lower() == "while":
                     whileloop(*arguments)
-                elif command.lower() == "cfile":
-                    createfile(arguments)
-                elif command.lower() == "atf":
-                    appendtofile(*arguments)
                 elif command.lower() in cfunctionnames:
                     funclines = cfunclines[command.lower()]
                     funcname = command.lower()
