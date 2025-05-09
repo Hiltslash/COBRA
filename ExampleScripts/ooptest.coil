@@ -1,0 +1,5 @@
+show "Hello, World!"
+cvar name string Beau
+cvar age int 12
+show @name
+show @age

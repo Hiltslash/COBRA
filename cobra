@@ -1,324 +1,151 @@
-#!/usr/bin/env python3
-from setproctitle import setproctitle
-
-setproctitle("Cobra")
-import os
-import tkinter as Tk
-from tkinter import messagebox
-import subprocess
-from os import system as syst
+#!/usr/bin/env python3.12
+from os import system
 import sys
-from time import sleep as wait
 import shlex
-def clear(): syst("clear")
-variables = {"calresult" : 0}
-current_line = 0
-cfunclinenums = {}
-cfuncargs = {}
-cfunclines = {}
-cfunctionnames = []
-ifmet = False
-isdefiningfunc = False
-inifbrackets = False
-cfunccounter = 0
 
-class command:
-    def __init__(self, name, function, argmax, argmin):
+
+class Runtime:
+    def __init__(self):
+        self.variables = {}
+        self.keywords = {}
+        self.functions = []
+        self.commands = []
+        self.isDefFunc = False
+        self.isDefIf = False
+
+    def createVariable(self, key, vartype, value):
+        self.variables[key] = {"vartype" : vartype, "value" : value}
+
+
+runtime = Runtime()
+
+
+class Command:
+    def __init__(self, name, arguments, exec_code):
         self.name = name
-        self.function = function
-        self.argmax = argmax
-        self.argmin = argmin
-        
-        def run(self, *arguments):
-            if len(*arguments) >= argmin and len(*arguments) <= argmax:
-                self.function(*arguments)
-            elif len(*arguments) <= argmin:
-                raise SyntaxError(f"{self.name} command takes at minimum {self.argmin} arguments, {len(*arguments)} provided.")
-            else:
-                raise SyntaxError(f"{self.name} command takes at max {self.argmax} arguments, {len(*arguments)} provided.")
-class mlinecommand(command):
-    def __init__(self, name: str, function: function, argmax: int, argmin: int, endlabel: str, inb: bool = None):
-        super().__init__(name, function, argmax, argmin)
-        self.endlabel = endlabel
-        self.inb = inb
-        def minimain(self, *arguments):
-            global current_line
-            global scriptlines
-            line = scriptlines[current_line]
-            while self.inb == True:
-                if not line.startswith("//") or not line.startswith(":"):
-                    command, arguments = parse(line)
-                    if command in commands and type(command) == command:
-                        if command.maxargs > 1:
-                            commands[command](*arguments)
-                        else:
-                            commands[command](arguments)
-                        current_line += 1
-                        continue
-                    else:
-                        raise SyntaxError("im not in the mood to write a syntax error ):")
-                elif line.startswith(":"):
-                    if line.lower() == ":end":
-                        self.inb = False
-                        current_line += 1
-                        continue
-                
-
-        def run(self, *arguments):
-            if len(*arguments) >= argmin and len(*arguments) <= argmax:
-                self.function(*arguments)
-            elif len(*arguments) <= argmin:
-                raise SyntaxError(f"{self.name} command takes at minimum {self.argmin} arguments, {len(*arguments)} provided.")
-            else:
-                raise SyntaxError(f"{self.name} command takes at max {self.argmax} arguments, {len(*arguments)} provided.")
-
-
-#ALL THE COMMANDS
-def say(argument):
-    subprocess.run(["say", argument])
-def checkvar(string):
-    if "var" in string and type(string) == str:
-        donotuse, important = parse(string)
-        importants = variables[important]
-        return importants
-    else:
-        return string
-#Comment on line 15
-def sysdial(message, type, resultstore):
-    if type == "info":
-        messagebox.showinfo(filename, message)
-    elif type == "warning":
-        messagebox.showwarning(filename, message)
-    elif type == "error":
-        messagebox.showerror(filename, message)
-    elif type == "ayn":
-        variables[resultstore] = messagebox.askyesno(filename, message)
-    elif type == "askok":
-        variables[resultstore] = messagebox.askokcancel(filename, message)
-    else:
-        raise SyntaxError("INCORRECT SYSTEMDIAL TYPE")
-def ifcondition(condition, exresult):
-    conditionvar = checkvar(condition)
-    exresultvar = checkvar(exresult)
-    global ifmet
-    global inifbrackets
-    if str(conditionvar) == str(exresultvar):
-        ifmet = True
-        inifbrackets = True
-    else:
-        ifmet = False
-        inifbrackets = True
-def goto():
-    pass
-
-def calculate(numberone, operation, numbertwo, storevariable):
-    numberone = checkvar(numberone)
-    numbertwo = checkvar(numbertwo)
-    operation = checkvar(operation)
-    try:
-        numberone = int(numberone)
-        numbertwo = int(numbertwo)
-        if operation == "*":
-            result = numberone * numbertwo
-        elif operation == "/":
-            result = numberone / numbertwo
-        elif operation == "+":
-            result = numberone + numbertwo
-        elif operation == "-":
-            result = numberone - numbertwo
-        elif operation == "#":
-            result = numberone ** numbertwo
-        else:
-            print(f"Operation not found ({operation}) VALID OPERATIONS: +,*,-,#,/.")
-            result = None
-        variables[storevariable] = result
-    except ValueError:
-        print("VALUE ERROR: PLEASE PROVIDE TWO INTEGERS")
-        raise ValueError
-
-def waittime(seconds):
-    wait(int(seconds))
-def show(argument):
-    argument = checkvar(argument)
-    print(argument)
-
-def cvar(name, value):
-    try:
-        int(value)
-    except ValueError:
-        str(value)
-    variables[name] = value
-
-def takeinput(variable, message):
-    variables[variable] = input(str(message))
-
-def forloop(times, command, *arguments):
-    for i in range(int(times)):
-        commands[command](*arguments)
-
-def whileloop(inone, coperator, intwo, command, *arguments):
-    if coperator == "==":
-        while inone == intwo:
-            if command in commands:
-                commands[command](*arguments)
-    elif coperator == ">":
-        while inone > intwo:
-            if command in commands:
-                commands[command](*arguments)
-    elif coperator == "<":
-        while inone < intwo:
-            if command in commands:
-                commands[command](*arguments)
-    elif coperator == "<":
-        while inone < intwo:
-            if command in commands:
-                commands[command](*arguments)
-
-
-#Unfortunatley, right now your custom functions can only have 1 argument becuase
-#i don't know how to do it right lol
-def createfunc(funcname, neededarg, linenum):
-    try:
-        int(linenum)
-        cfunclinenums[funcname] = linenum
-        cfuncargs[funcname] = neededarg
-        global isdefiningfunc
-        isdefiningfunc = True
-        cfunctionnames.append(funcname)
-        cfunclines[funcname] = []
-    except ValueError:
-        raise SyntaxError("PROVIDED LINENUMBER WHEN DEFINING FUNCTION MUST BE INTEGER!")
-
-
-
-#List of all valid commands
-commands =  {
-    "show" : show,
-    "cvar" : cvar,
-    "cal" : calculate,
-    "clear" : clear,
-    "input" : takeinput,
-    "for" : forloop,
-    "wait" : waittime,
-    "if" : ifcondition,
-    "goto" : goto,
-    "systemsay" : say,
-    "systemdial" : sysdial,
-    "func" : createfunc,
-    "while" : whileloop
-}
-
-
-
-#Checks the filename
-if len(sys.argv) > 1:
-    filename = sys.argv[1]
-else:
-    print("Error: No filename provided.")
-    sys.exit(1)
-if not filename.endswith('.coil'):
-    print("Error: Cobra scripts must have a .coil extension.")
-    sys.exit(1)
-
-def execfunc(function, functionname, argumenti):
-    for line in function:
-        command, arguments = parse(line)
-        if "^" in arguments:
-            arguments = argumenti
-        if type(arguments) == list:
-            commands[command](*arguments)
-        else:
-            commands[command](arguments)
-#Main parser of the line of code
-def parse(line):
-    if len(line) > 0:
-        if line[0] == ":":
-            pass # This cannot happen, unless the script has an unidentified label.
-        else:
-            shlexedline = shlex.split(line)
-            command = shlexedline[0]
-            try:
-                if shlexedline[2]:
-                    arguments = shlexedline[1:]
+        self.arguments = arguments
+        self.exec = exec_code
+        runtime.commands.append(self)
+    def execute(self, *passedArguments):
+    # Replace variable references like @var with their actual value
+        resolved_args = []
+        for arg in passedArguments:
+            if arg.startswith("@"):
+                varname = arg[1:]
+                if varname in runtime.variables:
+                    resolved_args.append(runtime.variables[varname]["value"])
                 else:
-                    arguments = shlexedline[1]
-            except IndexError:
-                arguments = shlexedline[1]
-            return command, arguments
+                    print(f"[RUNTIME ERROR] Variable '{varname}' not found.")
+                    return
+            else:
+                resolved_args.append(arg)
 
-
-#Main function that iterates through every line in the script and performes the commands
-def main():
-    global current_line
-    global inifbrackets
-    global ifmet
-    global isdefiningfunc
-    global cfunccounter
-    with open(filename, "r") as file:
-        scriptlines = file.readlines()
-    while current_line < len(scriptlines):
-        line = scriptlines[current_line].strip()
-        if not line:
-            current_line += 1
-            continue
-        elif line.lower() == ":end":
-            inifbrackets = False
-            current_line += 1
-            continue
-        elif line.lower() == ":endef":
-            isdefiningfunc = False
-            current_line += 1
-            continue
-        elif inifbrackets and not ifmet:
-            current_line += 1
-            continue
-        elif isdefiningfunc:
-            cfunclines[cfunctionnames[cfunccounter]].append(line)
-            cfunccounter += 1
-            current_line += 1
-            continue
-        elif line.startswith("//"):
-            current_line += 1
-            continue
-
-        command, arguments = parse(line)
-        if command in commands or command in cfunctionnames:
-            try:
-                if command.lower() == "show":
-                    show(arguments)
-                elif command.lower() == "input":
-                     takeinput(*arguments)
-                elif command.lower() == "for":
-                    forloop(*arguments)
-                elif command.lower() == "wait":
-                    waittime(arguments)
-                elif command.lower() == "if":
-                    ifcondition(*arguments)
-                elif command.lower() == "cvar":
-                    cvar(*arguments)
-                elif command.lower() == "cal":
-                     calculate(*arguments)
-                elif command.lower() == "clear":
-                        clear()
-                elif command.lower() == "systemsay":
-                    say(arguments)
-                elif command.lower() == "goto":
-                    current_line = int(arguments)
-                    continue
-                elif command.lower() == "systemdial":
-                    sysdial(*arguments)
-                elif command.lower() == "func":
-                    createfunc(*arguments)
-                elif command.lower() == "while":
-                    whileloop(*arguments)
-                elif command.lower() in cfunctionnames:
-                    funclines = cfunclines[command.lower()]
-                    funcname = command.lower()
-                    execfunc(funclines, funcname, arguments)
-
-            except TypeError as e:
-                raise TypeError
+        if len(resolved_args) == len(self.arguments):
+            self.exec(*resolved_args)
         else:
-            print(f"Syntax error: {command} command not found in base.")
-        current_line += 1
+            print(f"ERROR: command {self.name} expects {len(self.arguments)} but got {len(resolved_args)}")
+
+        
+if True: #Helper functions for more complex commands
+    def math(n1, operator, n2, resvar):
+        try:
+            n1 = float(n1)
+            n2 = float(n2)
+        except ValueError:
+            print("Error: n1 and n2 must be numbers.")
+            return
+
+        if operator == '+':
+            result = n1 + n2
+        elif operator == '-':
+            result = n1 - n2
+        elif operator == '*':
+            result = n1 * n2
+        elif operator == '/':
+            if n2 == 0:
+                print("[Error]: Division by zero")
+                return
+            result = n1 / n2
+        elif operator == '%':
+            if n2 == 0:
+                print("[Error]: Modulo by zero")
+                return
+            result = n1 % n2
+        elif operator == '^':
+            result = n1 ** n2
+        else:
+            print("[Error]: Unsupported operator")
+            return
+
+        runtime.createVariable(resvar, "int", result)
+
+
+if True: #Commands
+    show = Command(
+        "show",
+        ["message"], 
+        lambda message:
+            print(message)
+    )
+
+    calc = Command(
+        "math",
+        ["n1", "operator", "n2", "resvar"],
+        lambda n1, operator, n2, resvar: 
+            math(n1, operator, n2, resvar)
+    )
+
+    cvar = Command(
+        "cvar",
+        ["name", "vtype", "value"],
+        lambda name, vtype, value:
+            runtime.createVariable(name, vtype, value)
+    )
+
+
+if True: #Sys-argv detection
+    if len(sys.argv) > 1:
+        filename = sys.argv[1]
+    else:
+        print("Error: No filename provided.")
+        sys.exit(1)
+
+    if not filename.endswith('.coil'):
+        print("Error: Cobra scripts must have a .coil extension.")
+        sys.exit(1)
+
+
+def main(): #Main function that loops through lines of code and executes them
+    with open(filename, "r") as file:
+        scriptlines = file.read().splitlines()
+
+    for line in scriptlines:
+        if not line.strip():  # Skip blank lines
+            continue
+
+        sectors = shlex.split(line)
+        command_name = sectors[0]
+        arguments = sectors[1:]
+
+        # Check for keywords first
+        #if command_name in runtime.keywords:
+         #   try:
+          #      keyw = runtime.keywords[command_name]
+           #     keyw.execute(*arguments)
+            #except Exception as e:
+             #   print(f"[RUNTIME ERROR] {e}")
+              #  sys.exit(1)
+            # Check for commands if it's not a keyword
+        cmd_obj = next((c for c in runtime.commands if c.name == command_name), None)
+        if cmd_obj:
+            try:
+                cmd_obj.execute(*arguments)
+            except Exception as e:
+                print(f"[RUNTIME ERROR] {e}")
+                sys.exit(1)
+        else:
+            print(f"[ERROR] Unknown command or keyword: {command_name}")
+            sys.exit(1)
+
 main()
+
