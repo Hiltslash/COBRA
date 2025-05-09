@@ -1,6 +1,0 @@
-func "greet" "name" 1
-show "Hello," 
-show "^var name"
-:endef
-input "name" "Input your name"
-greet "^var name"

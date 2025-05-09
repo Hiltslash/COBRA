@@ -1,22 +1,10 @@
 show "Hello, World!"
-input name "Enter your name."
-show "Hello,"
-show "var name"
-show "The result of 5 + 5:"
-cal 5 + 5 calcresult
-show "var calcresult"
-cvar coolness 100
-show "coolness of this project:"
-show "var coolness"
-for 5 show "Hello, World!"
-if "var name" "Beau"
-show "No way, you're me!"
-show "That's Crazy!"
-systemdial "How did you know my name? It's not like i put it all over my code." "warning" None
-systemsay "What on Earth?"
-:end
-show "this goes after the if statement."
-show "The Integer num will go up until it reaches 64."
-wait 3
-clear s
-cvar "num" 0
+cvar name string Beau
+cvar age int 12
+show @name
+show @age
+cvar num1 int 1
+cvar num2 int 1
+cvar result int 0
+math @num1 + @num2 result
+show @result

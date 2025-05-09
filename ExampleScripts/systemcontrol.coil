@@ -1,8 +1,0 @@
-systemdial "Hello. Do you want to die?" "ayn" "result"
-if "var result" "True"
-systemsay "nah that's crazy get some help"
-:end
-if "var result" "False"
-systemsay "if you are a c plus plus dev than thats a lie"
-systemsay "otherwise good for you man"
-:end
