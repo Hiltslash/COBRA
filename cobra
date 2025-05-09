@@ -26,8 +26,9 @@ class Command:
         self.arguments = arguments
         self.exec = exec_code
         runtime.commands.append(self)
+
     def execute(self, *passedArguments):
-    # Replace variable references like @var with their actual value
+        # Replace variable references like @var with their actual value
         resolved_args = []
         for arg in passedArguments:
             if arg.startswith("@"):
@@ -40,10 +41,10 @@ class Command:
             else:
                 resolved_args.append(arg)
 
-        if len(resolved_args) == len(self.arguments):
+        if len(resolved_args) >= 1:  # Allow multiple arguments (at least one)
             self.exec(*resolved_args)
         else:
-            print(f"ERROR: command {self.name} expects {len(self.arguments)} but got {len(resolved_args)}")
+            print(f"ERROR: command {self.name} expects at least 1 argument but got {len(resolved_args)}")
 
         
 if True: #Helper functions for more complex commands
@@ -83,9 +84,8 @@ if True: #Helper functions for more complex commands
 if True: #Commands
     show = Command(
         "show",
-        ["message"], 
-        lambda message:
-            print(message)
+        ["...messages"],  # Allow for multiple arguments
+        lambda *args: print(" ".join(str(arg) for arg in args))
     )
 
     calc = Command(
@@ -100,6 +100,13 @@ if True: #Commands
         ["name", "vtype", "value"],
         lambda name, vtype, value:
             runtime.createVariable(name, vtype, value)
+    )
+    inp = Command(
+        "termIN",
+        ["message", "resvar"],
+        lambda message, resvar: (
+            runtime.createVariable(resvar, "string", input())
+        )
     )
 
 
@@ -127,15 +134,7 @@ def main(): #Main function that loops through lines of code and executes them
         command_name = sectors[0]
         arguments = sectors[1:]
 
-        # Check for keywords first
-        #if command_name in runtime.keywords:
-         #   try:
-          #      keyw = runtime.keywords[command_name]
-           #     keyw.execute(*arguments)
-            #except Exception as e:
-             #   print(f"[RUNTIME ERROR] {e}")
-              #  sys.exit(1)
-            # Check for commands if it's not a keyword
+        # Check for commands if it's not a keyword
         cmd_obj = next((c for c in runtime.commands if c.name == command_name), None)
         if cmd_obj:
             try:
@@ -148,4 +147,3 @@ def main(): #Main function that loops through lines of code and executes them
             sys.exit(1)
 
 main()
-

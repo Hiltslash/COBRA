@@ -1,10 +1,2 @@
-show "Hello, World!"
-cvar name string Beau
-cvar age int 12
-show @name
-show @age
-cvar num1 int 1
-cvar num2 int 1
-cvar result int 0
-math @num1 + @num2 result
-show @result
+termIN "What's your name?" result
+show "Hello," @result
