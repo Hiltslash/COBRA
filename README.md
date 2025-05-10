@@ -1,13 +1,11 @@
 # COBRA
 Custom Programming language built in python. Can you even imagine how slow it is?
 
-Hey so i built this alone as a project just for fun but I am trying to make it better :D have a good day/night! Fri May 9th 5:44:03 PM
+Hey so i built this alone as a project just for fun but I am trying to make it better :D
 
-"show <message>" to print things to the screen
-use @<variable> to refrence a variable
-"math <num1> <operator> <num2> <resultvariable>" to do math (+, -, *, /, ^, %)"
-"cvar <name> <type> <value>" to create runtime variables
+have a good day/night! Fri May 9th 5:44:03 PM
 
+Check the example for details on syntax.
 
 
 
