@@ -18,6 +18,9 @@ Check the example for details on syntax.
 6. Add cobra to your path: alias cobra="your/path/to/cobra/cobra"
 7. Reactivate your terminal
 8. Test it with "cobra example.coil" in the examplescripts directory
+9. Navigate to the extension directory in terminal
+10. run code --install-extension cobravscode0_1.vsix
+
 
 goodbye!
 :D
