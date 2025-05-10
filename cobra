@@ -1,7 +1,9 @@
 #!/usr/bin/env python3.12
-from os import system
+import os
 import sys
 import shlex
+from pathlib import Path
+from time import sleep
 
 
 class Runtime:
@@ -48,6 +50,7 @@ class Command:
 
         
 if True: #Helper functions for more complex commands
+
     def math(n1, operator, n2, resvar):
         try:
             n1 = float(n1)
@@ -80,34 +83,106 @@ if True: #Helper functions for more complex commands
 
         runtime.createVariable(resvar, "int", result)
 
+    def fh(mode, f, *other):
+        if mode == "c":
+                with open(f, "w") as file:
+                    ...
+        if os.path.exists(f):
+            if mode == "a":
+                content = other[0]
+                with open(f, "a") as file:
+                    file.write(f"\n{content}")
+            elif mode == "o":
+                content = other[0]
+                with open(f, "w") as file:
+                    file.write(content)
+            elif mode == "e":
+                with open(f, "w") as file:
+                    file.write("")
+            elif mode == "d":
+                os.remove(Path.cwd() / f)
+            
+
 
 if True: #Commands
-    show = Command(
-        "show",
-        ["...messages"],  # Allow for multiple arguments
-        lambda *args: print(" ".join(str(arg) for arg in args))
-    )
+    if True: #I/O
 
-    calc = Command(
-        "math",
-        ["n1", "operator", "n2", "resvar"],
-        lambda n1, operator, n2, resvar: 
-            math(n1, operator, n2, resvar)
-    )
-
-    cvar = Command(
-        "cvar",
-        ["name", "vtype", "value"],
-        lambda name, vtype, value:
-            runtime.createVariable(name, vtype, value)
-    )
-    inp = Command(
-        "termIN",
-        ["message", "resvar"],
-        lambda message, resvar: (
-            runtime.createVariable(resvar, "string", input())
+        show = Command(
+            "show",
+            ["...messages"],  # Allow for multiple arguments
+            lambda *args: print(" ".join(str(arg) for arg in args))
         )
-    )
+
+        inp = Command(
+            "termIN",
+            ["message", "resvar"],
+            lambda message, resvar: (
+                runtime.createVariable(resvar, "string", input())
+            )
+        )
+
+    if True: #Math
+
+        calc = Command(
+            "math",
+            ["n1", "operator", "n2", "resvar"],
+            lambda n1, operator, n2, resvar: 
+                math(n1, operator, n2, resvar)
+        )
+
+    if True: #Variables
+
+        cvar = Command(
+            "cvar",
+            ["name", "vtype", "value"],
+            lambda name, vtype, value:
+                runtime.createVariable(name, vtype, value)
+        )
+    
+    if True: #File Handling
+    
+        mf = Command(
+            "createFile",
+            ["name"],
+            lambda name:
+                fh("c", name)
+        )
+
+        af = Command(
+            "appendToFile",
+            ["file", "content"],
+            lambda file, content:
+                fh("a", file, content)
+        )
+
+        ovf = Command(
+            "overwriteFile",
+            ["file", "content"],
+            lambda file, content:
+                fh("o", file, content)
+        )
+
+        ef = Command(
+            "eraseFile",
+            ["file"],
+            lambda file:
+                fh("e", file)
+        )
+
+        df = Command(
+            "deleteFile",
+            ["file"],
+            lambda file:
+                fh("d", file)
+        )
+
+    if True: #Misc
+        wait = Command(
+            "wait",
+            ["ms"],
+            lambda ms:
+                sleep(int(ms) / 1000)
+        )
 
 
 if True: #Sys-argv detection
@@ -129,10 +204,23 @@ def main(): #Main function that loops through lines of code and executes them
     for line in scriptlines:
         if not line.strip():  # Skip blank lines
             continue
+        if line.startswith("//") or line.startswith("#"):
+            continue
 
         sectors = shlex.split(line)
-        command_name = sectors[0]
-        arguments = sectors[1:]
+        x = 0
+        d = False
+
+        #Mid-line comment detection
+        filtered_sectors = []
+        for s in sectors:
+            if s.startswith("//") or s.startswith("#"):
+                break  # Ignore everything after this
+            filtered_sectors.append(s)
+        if not filtered_sectors:
+            continue
+        command_name = filtered_sectors[0]
+        arguments = filtered_sectors[1:]
 
         # Check for commands if it's not a keyword
         cmd_obj = next((c for c in runtime.commands if c.name == command_name), None)

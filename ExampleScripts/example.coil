@@ -1,2 +1,0 @@
-termIN "What's your name?" result
-show "Hello," @result

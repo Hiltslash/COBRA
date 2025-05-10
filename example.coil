@@ -1,0 +1,31 @@
+// I/0
+show "What's your name?"
+termIN "What's your name?" result
+show "Hello," @result
+
+// Variables
+cvar name string "Beau"
+cvar social_skills int -1
+
+// Math
+math 1 + 1 result
+math 2 - 2 result
+math 3 * 3 result
+math 4 / 4 result
+math 5 ^ 5 result
+math 6 % 6 result
+show "Result:" @result
+
+
+// File Handling (also wait)
+eraseFile test.coil
+createFile "test.coil"
+overwriteFile test.coil "I AM SO SILLY"
+appendToFile test.coil "my cat pepper is just a lil guy"
+wait 3000
+deleteFile test.coil
+
+// Comments
+show "Hello!" // "This won't show; it's commented out."
+// This is a comment
+# You can also do comments with a # instead of // if you'd like.
