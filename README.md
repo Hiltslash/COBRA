@@ -20,3 +20,4 @@ Check the example for details on syntax.
 8. Test it with "cobra example.coil" in the examplescripts directory
 
 goodbye!
+:D
