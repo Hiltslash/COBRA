@@ -22,3 +22,4 @@ use @<variable> to refrence a variable
 8. Test it with "cobra example.coil" in the examplescripts directory
 
 goodbye!
+:D

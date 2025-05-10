@@ -208,8 +208,6 @@ def main(): #Main function that loops through lines of code and executes them
             continue
 
         sectors = shlex.split(line)
-        x = 0
-        d = False
 
         #Mid-line comment detection
         filtered_sectors = []
