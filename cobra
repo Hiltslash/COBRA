@@ -1,9 +1,35 @@
-#!/usr/bin/env python3.12
+#!/usr/bin/env python3.11
+
+#Imports
 import os
 import sys
 import shlex
 from pathlib import Path
 from time import sleep
+import modules.pgs as pgs
+
+
+class cType:
+    def __init__(self, vtype: str):
+        self.validTypes = ["string", "int", "bool", "null"]
+        if vtype in self.validTypes:
+            self.type = vtype
+        else:
+            raise TypeError(f"INVALID DATA TYPE! {vtype} isn't in validTypes.")
+
+    def validate(self, value):
+        if self.type == "string":
+            return isinstance(value, str)
+        elif self.type == "int":
+            return isinstance(value, int) or (isinstance(value, float) and value.is_integer())
+        elif self.type == "bool":
+            return isinstance(value, bool)
+        elif self.type == "null":
+            return value is None
+        return False
+
+    def showType(self):
+        return self.type
 
 
 class Runtime:
@@ -16,7 +42,29 @@ class Runtime:
         self.isDefIf = False
 
     def createVariable(self, key, vartype, value):
-        self.variables[key] = {"vartype" : vartype, "value" : value}
+        vartype_obj = cType(vartype)
+        # Try to cast value to the correct type
+        if vartype == "int":
+            try:
+                value = int(value)
+            except ValueError:
+                raise TypeError(f"Value '{value}' cannot be cast to int")
+        elif vartype == "bool":
+            if isinstance(value, str):
+                if value.lower() in ["true", "1"]:
+                    value = True
+                elif value.lower() in ["false", "0"]:
+                    value = False
+                else:
+                    raise TypeError(f"Value '{value}' cannot be cast to bool")
+        elif vartype == "null":
+            value = None
+        elif vartype == "string":
+            value = str(value)
+        # Validate
+        if not vartype_obj.validate(value):
+            raise TypeError(f"Value '{value}' does not match type '{vartype}'")
+        self.variables[key] = {"vartype": vartype_obj, "value": value}
 
 
 runtime = Runtime()
@@ -41,6 +89,9 @@ class Command:
                     print(f"[RUNTIME ERROR] Variable '{varname}' not found.")
                     return
             else:
+                # Strip quotes from string arguments
+                if (arg.startswith('"') and arg.endswith('"')) or (arg.startswith("'") and arg.endswith("'")):
+                    arg = arg[1:-1]
                 resolved_args.append(arg)
 
         if len(resolved_args) >= 1:  # Allow multiple arguments
@@ -137,6 +188,13 @@ if True: #Commands
             lambda name, vtype, value:
                 runtime.createVariable(name, vtype, value)
         )
+
+        st = Command(
+            "dispType",
+            ["variable"],
+            lambda variable:
+                print(runtime.variables[variable]["vartype"].showType())
+        )
     
     if True: #File Handling
     
@@ -183,6 +241,14 @@ if True: #Commands
                 sleep(int(ms) / 1000)
         )
 
+    if True: #Graphics
+        init = Command(
+            "createWindow",
+            ["color", "name", "sx", "sy", "closable"],
+            lambda color, name, sx, sy, other=False:
+                pgs.startup(color, name, int(sx), int(sy), other)
+        )
+
 
 if True: #Sys-argv detection
     if len(sys.argv) > 1:
@@ -196,6 +262,34 @@ if True: #Sys-argv detection
         sys.exit(1)
 
 
+def split_command_line(line):
+    parts = []
+    current = []
+    in_quotes = False
+    quote_char = None
+    
+    for char in line:
+        if char in ['"', "'"]:
+            if not in_quotes:
+                in_quotes = True
+                quote_char = char
+            elif char == quote_char:
+                in_quotes = False
+            else:
+                current.append(char)
+        elif char.isspace() and not in_quotes:
+            if current:
+                parts.append(''.join(current))
+                current = []
+        else:
+            current.append(char)
+    
+    if current:
+        parts.append(''.join(current))
+    
+    return parts
+
+
 def main(): #Main function that loops through lines of code and executes them
     with open(filename, "r") as file:
         scriptlines = file.read().splitlines()
@@ -206,7 +300,8 @@ def main(): #Main function that loops through lines of code and executes them
         if line.startswith("//") or line.startswith("#"):
             continue
 
-        sectors = shlex.split(line)
+        # Use our custom split function instead of shlex.split
+        sectors = split_command_line(line)
 
         #Mid-line comment detection
         filtered_sectors = []
@@ -230,5 +325,6 @@ def main(): #Main function that loops through lines of code and executes them
         else:
             print(f"[ERROR] Unknown command or keyword: {command_name}")
             sys.exit(1)
+
 
 main()

@@ -1,0 +1,49 @@
+{
+  "name": "cobra-vscode",
+  "displayName": "Cobra Language Support",
+  "description": "VS Code extension for Cobra (.coil)",
+  "version": "0.0.1",
+  "publisher": "Beau Davidson",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "activationEvents": [
+    "onLanguage:cobra",
+    "onCommand:cobra.runFile"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "cobra",
+        "aliases": ["Cobra", "cobra"],
+        "extensions": [".coil"],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "cobra",
+        "scopeName": "source.cobra",
+        "path": "./syntaxes/cobra.tmLanguage.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "cobra.runFile",
+        "title": "Run Cobra File"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "cobra.runFile",
+          "when": "resourceExtname == .coil",
+          "group": "navigation"
+        }
+      ]
+    }
+  },
+  "scripts": {},
+  "devDependencies": {}
+}

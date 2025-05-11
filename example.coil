@@ -6,6 +6,8 @@ show "Hello," @result
 // Variables
 cvar name string "Beau"
 cvar social_skills int -1
+cvar test int 100
+dispType test
 
 // Math
 math 1 + 1 result
@@ -29,3 +31,9 @@ deleteFile test.coil
 show "Hello!" // "This won't show; it's commented out."
 // This is a comment
 # You can also do comments with a # instead of // if you'd like.
+
+
+//GUI
+cvar yea bool true
+cvar naw bool false
+createWindow "blue" "BRUH" 100 100 @yea // So yeah for some reason rn the bg color (arg 1) dosen't work ¯\_(ツ)_/¯

@@ -1,0 +1,40 @@
+{
+  "name": "Cobra",
+  "scopeName": "source.cobra",
+  "patterns": [
+    {
+      "name": "keyword.control.cobra",
+      "match": "\\b(show|createWindow|runZSH|termIN|math|cvar|createFile|appendToFile|overwriteFile|eraseFile|deleteFile|wait|dispType)\\b"
+    },
+    {
+      "name": "variable.parameter.cobra",
+      "match": "@[a-zA-Z_][a-zA-Z0-9_]*"
+    },
+    {
+      "name": "comment.line.double-slash.cobra",
+      "match": "//.*$"
+    },
+    {
+      "name": "comment.line.number-sign.cobra",
+      "match": "#.*$"
+    },
+    {
+      "name": "string.quoted.double.cobra",
+      "match": "\"(\\\\.|[^\"])*\""
+    },
+    {
+      "name": "constant.numeric.cobra",
+      "match": "\\b\\d+(\\.\\d+)?\\b"
+    },
+    {
+      "name": "keyword.operator.cobra",
+      "match": "\\+|\\-|\\*|\\/|%|\\^"
+    },
+    {
+      "name": "storage.type.primitive.cobra",
+      "match": "\\b(int|float|string|bool|null)\\b"
+    }
+  ],
+  "repository": {},
+  "scope": "source.cobra"
+}
