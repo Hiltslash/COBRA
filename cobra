@@ -23,6 +23,10 @@ class cobra:
             "show": self.show,
             "let": self.let
         }
+        self.variables = {}
+        self.variableTypes = [
+            "int", "str"
+        ]
 
     def show(self, arguments):
         if len(arguments) == 2:
@@ -32,8 +36,7 @@ class cobra:
         elif len(arguments) == 1:
             print(arguments[0])
         else:
-            print(tc.RED + f"KEYWORD SHOW REQUIRES 1, TAKES 2 ARGUMENTS, {len(arguments)} GIVEN." + Style.RESET_ALL)
-
+            self.throwError(f"KEYWORD SHOW REQUIRES 1, TAKES 2 ARGUMENTS, {len(arguments)} GIVEN.")
 
     def convertStringToColor(self, string: str):
         if string.lower() == "red":
@@ -44,8 +47,37 @@ class cobra:
             return tc.GREEN
         elif string.lower() == "yellow":
             return tc.YELLOW
+        
     def let(self, arguments):
-        pass
+        if len(arguments) != 4:
+            self.throwError(f"KEYWORD LET REQUIRES 3 ARGUMENTS, {len(arguments) - 1} GIVEN.")
+        else:
+            type = arguments[0]
+            if type not in self.variableTypes:
+                self.throwError(f"INVALID TYPE {type}. VALID TYPES: {', '.join(self.variableTypes)}")
+            name = arguments[1]
+            if name in self.variables:
+                self.throwError(f"VARIABLE ALREADY DECLARED: {name}")
+            operator = arguments[2]
+            value = arguments[3]
+            if operator != "=":
+                self.throwError(f"INVALID OPERATOR {operator}. EXPECTED: '='")
+            match type:
+                case "int":
+                    if value.isdigit():
+                        self.variables[name] = int(value)
+                    else:
+                        self.throwError(f"TRIED TO DECLARE VARIABLE TYPE INT, BUT WAS NOT FULLY NUMBERS")
+                case "str":
+                    if value.startswith("\"") and value.endswith("\""):
+                        self.variables[name] = value
+                    else:
+                        self.throwError(f"TRIED TO DECLARE VARIABLE TYPE STR, BUT VALUE WAS NOT WRAPPED IN DOUBLE QUOTES.")
+    
+    def throwError(self, message="THERE WAS AN UNEXPECTED ERROR.", color=tc.RED):
+        msg = "ERROR!\n\n" + message + "\n\nERROR!"
+        print(color + msg + Style.RESET_ALL)
+        exit(1)
 
 src = arguments[1]
 scriptlines = loadFile(src)
@@ -55,21 +87,23 @@ def main():
     Cobra = cobra()
     
     for line in scriptlines:
-
         line = line.strip()
-        sectors = shlex.split(line)
-        command = sectors[0]
-        arguments = sectors[1:]
+        if line != "":
+            sectors = shlex.split(line)
+            command = sectors[0]
+            arguments = sectors[1:]
 
-        # --- DEBUG --- #
-        #print(sectors)
-        #print(command)
-        #print(arguments)
+            # --- DEBUG --- #
+            #print(sectors)
+            #print(command)
+            #print(arguments)
 
 
-        if command in Cobra.commands:
-            #print("Command found.") # --- DEBUG --- #
-            Cobra.commands[command](arguments)
+            if command in Cobra.commands:
+                #print("Command found.") # --- DEBUG --- #
+                Cobra.commands[command](arguments)
+        else:
+            continue
 
 if __name__ == "__main__":
     main()

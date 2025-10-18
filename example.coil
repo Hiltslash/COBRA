@@ -3,3 +3,5 @@ show "This is some blue text." "BLUE"
 show "And I'm green!" "green"
 show "And I'm yellow." "yeLLoW"
 show ".... and i'm boring."
+
+let int skill = 100
