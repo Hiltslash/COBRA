@@ -34,10 +34,8 @@ class cobra:
         else:
             print(tc.RED + f"KEYWORD SHOW REQUIRES 1, TAKES 2 ARGUMENTS, {len(arguments)} GIVEN." + Style.RESET_ALL)
 
-    def let(self, arguments):
-        pass
 
-    def convertStringToColor(sel, string: str):
+    def convertStringToColor(self, string: str):
         if string.lower() == "red":
             return tc.RED
         elif string.lower() == "blue":
@@ -46,6 +44,7 @@ class cobra:
             return tc.GREEN
         elif string.lower() == "yellow":
             return tc.YELLOW
+        
 
 src = arguments[1]
 scriptlines = loadFile(src)
