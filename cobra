@@ -1,330 +1,57 @@
-#!/usr/bin/env python3.11
+#! /usr/bin/env python3
 
-#Imports
-import os
+from colorama import Style
+from colorama import Fore as tc
 import sys
 import shlex
-from pathlib import Path
-from time import sleep
-import modules.pgs as pgs
 
+arguments = sys.argv
+if len(arguments) != 2:
+    print(tc.RED + "USAGE: cobra <file_path.coil>" + Style.RESET_ALL)
+    exit(1)
+elif not arguments[1].endswith(".coil"):
+    print(tc.RED + "You can only run .coil scripts made for Cobra." + Style.RESET_ALL)
+    exit(1)
 
-class cType:
-    def __init__(self, vtype: str):
-        self.validTypes = ["string", "int", "bool", "null"]
-        if vtype in self.validTypes:
-            self.type = vtype
-        else:
-            raise TypeError(f"INVALID DATA TYPE! {vtype} isn't in validTypes.")
+def loadFile(source):
+    with open(source, "r") as file:
+        return file.readlines()
 
-    def validate(self, value):
-        if self.type == "string":
-            return isinstance(value, str)
-        elif self.type == "int":
-            return isinstance(value, int) or (isinstance(value, float) and value.is_integer())
-        elif self.type == "bool":
-            return isinstance(value, bool)
-        elif self.type == "null":
-            return value is None
-        return False
-
-    def showType(self):
-        return self.type
-
-
-class Runtime:
+class cobra:
     def __init__(self):
-        self.variables = {}
-        self.keywords = {}
-        self.functions = []
-        self.commands = []
-        self.isDefFunc = False
-        self.isDefIf = False
-
-    def createVariable(self, key, vartype, value):
-        vartype_obj = cType(vartype)
-        # Try to cast value to the correct type
-        if vartype == "int":
-            try:
-                value = int(value)
-            except ValueError:
-                raise TypeError(f"Value '{value}' cannot be cast to int")
-        elif vartype == "bool":
-            if isinstance(value, str):
-                if value.lower() in ["true", "1"]:
-                    value = True
-                elif value.lower() in ["false", "0"]:
-                    value = False
-                else:
-                    raise TypeError(f"Value '{value}' cannot be cast to bool")
-        elif vartype == "null":
-            value = None
-        elif vartype == "string":
-            value = str(value)
-        # Validate
-        if not vartype_obj.validate(value):
-            raise TypeError(f"Value '{value}' does not match type '{vartype}'")
-        self.variables[key] = {"vartype": vartype_obj, "value": value}
-
-
-runtime = Runtime()
-
-
-class Command:
-    def __init__(self, name, arguments, exec_code):
-        self.name = name
-        self.arguments = arguments
-        self.exec = exec_code
-        runtime.commands.append(self)
-
-    def execute(self, *passedArguments):
-        # Replace variable references like @var with their actual value
-        resolved_args = []
-        for arg in passedArguments:
-            if arg.startswith("@"):
-                varname = arg[1:]
-                if varname in runtime.variables:
-                    resolved_args.append(runtime.variables[varname]["value"])
-                else:
-                    print(f"[RUNTIME ERROR] Variable '{varname}' not found.")
-                    return
-            else:
-                # Strip quotes from string arguments
-                if (arg.startswith('"') and arg.endswith('"')) or (arg.startswith("'") and arg.endswith("'")):
-                    arg = arg[1:-1]
-                resolved_args.append(arg)
-
-        if len(resolved_args) >= 1:  # Allow multiple arguments
-            self.exec(*resolved_args)
+        self.commands = {
+            "show": self.show
+        }
+    def show(self, arguments):
+        if len(arguments) > 1:
+            print(arguments[1] + arguments[0])
         else:
-            print(f"ERROR: command {self.name} expects at least 1 argument but got {len(resolved_args)}")
+            print(arguments[0])
 
-        
-if True: #Helper functions for more complex commands
+src = arguments[1]
+scriptlines = loadFile(src)
 
-    def math(n1, operator, n2, resvar):
-        try:
-            n1 = float(n1)
-            n2 = float(n2)
-        except ValueError:
-            print("Error: n1 and n2 must be numbers.")
-            return
-
-        if operator == '+':
-            result = n1 + n2
-        elif operator == '-':
-            result = n1 - n2
-        elif operator == '*':
-            result = n1 * n2
-        elif operator == '/':
-            if n2 == 0:
-                print("[Error]: Division by zero")
-                return
-            result = n1 / n2
-        elif operator == '%':
-            if n2 == 0:
-                print("[Error]: Modulo by zero")
-                return
-            result = n1 % n2
-        elif operator == '^':
-            result = n1 ** n2
-        else:
-            print("[Error]: Unsupported operator")
-            return
-
-        runtime.createVariable(resvar, "int", result)
-
-    def fh(mode, f, *other):
-        if mode == "c":
-                with open(f, "w") as file:
-                    ...
-        if os.path.exists(f):
-            if mode == "a":
-                content = other[0]
-                with open(f, "a") as file:
-                    file.write(f"\n{content}")
-            elif mode == "o":
-                content = other[0]
-                with open(f, "w") as file:
-                    file.write(content)
-            elif mode == "e":
-                with open(f, "w") as file:
-                    file.write("")
-            elif mode == "d":
-                os.remove(Path.cwd() / f)
-            
-
-if True: #Commands
-    if True: #I/O
-
-        show = Command(
-            "show",
-            ["...messages"],  # Allow for multiple arguments
-            lambda *args: print(" ".join(str(arg) for arg in args))
-        )
-
-        inp = Command(
-            "termIN",
-            ["message", "resvar"],
-            lambda message, resvar: (
-                runtime.createVariable(resvar, "string", input())
-            )
-        )
-
-    if True: #Math
-
-        calc = Command(
-            "math",
-            ["n1", "operator", "n2", "resvar"],
-            lambda n1, operator, n2, resvar: 
-                math(n1, operator, n2, resvar)
-        )
-
-    if True: #Variables
-
-        cvar = Command(
-            "cvar",
-            ["name", "vtype", "value"],
-            lambda name, vtype, value:
-                runtime.createVariable(name, vtype, value)
-        )
-
-        st = Command(
-            "dispType",
-            ["variable"],
-            lambda variable:
-                print(runtime.variables[variable]["vartype"].showType())
-        )
+def main():
+    global scriptlines
+    Cobra = cobra()
     
-    if True: #File Handling
-    
-        mf = Command(
-            "createFile",
-            ["name"],
-            lambda name:
-                fh("c", name)
-        )
-
-        af = Command(
-            "appendToFile",
-            ["file", "content"],
-            lambda file, content:
-                fh("a", file, content)
-        )
-
-        ovf = Command(
-            "overwriteFile",
-            ["file", "content"],
-            lambda file, content:
-                fh("o", file, content)
-        )
-
-        ef = Command(
-            "eraseFile",
-            ["file"],
-            lambda file:
-                fh("e", file)
-        )
-
-        df = Command(
-            "deleteFile",
-            ["file"],
-            lambda file:
-                fh("d", file)
-        )
-
-    if True: #Misc
-        wait = Command(
-            "wait",
-            ["ms"],
-            lambda ms:
-                sleep(int(ms) / 1000)
-        )
-
-    if True: #Graphics
-        init = Command(
-            "createWindow",
-            ["color", "name", "sx", "sy", "closable"],
-            lambda color, name, sx, sy, other=False:
-                pgs.startup(color, name, int(sx), int(sy), other)
-        )
-
-
-if True: #Sys-argv detection
-    if len(sys.argv) > 1:
-        filename = sys.argv[1]
-    else:
-        print("Error: No filename provided.")
-        sys.exit(1)
-
-    if not filename.endswith('.coil'):
-        print("Error: Cobra scripts must have a .coil extension.")
-        sys.exit(1)
-
-
-def split_command_line(line):
-    parts = []
-    current = []
-    in_quotes = False
-    quote_char = None
-    
-    for char in line:
-        if char in ['"', "'"]:
-            if not in_quotes:
-                in_quotes = True
-                quote_char = char
-            elif char == quote_char:
-                in_quotes = False
-            else:
-                current.append(char)
-        elif char.isspace() and not in_quotes:
-            if current:
-                parts.append(''.join(current))
-                current = []
-        else:
-            current.append(char)
-    
-    if current:
-        parts.append(''.join(current))
-    
-    return parts
-
-
-def main(): #Main function that loops through lines of code and executes them
-    with open(filename, "r") as file:
-        scriptlines = file.read().splitlines()
-
     for line in scriptlines:
-        if not line.strip():  # Skip blank lines
-            continue
-        if line.startswith("//") or line.startswith("#"):
-            continue
 
-        # Use our custom split function instead of shlex.split
-        sectors = split_command_line(line)
+        line = line.strip()
+        sectors = shlex.split(line)
+        command = sectors[0]
+        arguments = sectors[1:]
 
-        #Mid-line comment detection
-        filtered_sectors = []
-        for s in sectors:
-            if s.startswith("//") or s.startswith("#"):
-                break  # Ignore everything after this
-            filtered_sectors.append(s)
-        if not filtered_sectors:
-            continue
-        command_name = filtered_sectors[0]
-        arguments = filtered_sectors[1:]
-
-        # Check for commands if it's not a keyword
-        cmd_obj = next((c for c in runtime.commands if c.name == command_name), None)
-        if cmd_obj:
-            try:
-                cmd_obj.execute(*arguments)
-            except Exception as e:
-                print(f"[RUNTIME ERROR] {e}")
-                sys.exit(1)
-        else:
-            print(f"[ERROR] Unknown command or keyword: {command_name}")
-            sys.exit(1)
+        # --- DEBUG --- #
+        #print(sectors)
+        #print(command)
+        #print(arguments)
 
 
-main()
+        if command in Cobra.commands:
+            #print("Command found.") # --- DEBUG --- #
+            Cobra.commands[command](arguments)
+
+if __name__ == "__main__":
+    main()
+
