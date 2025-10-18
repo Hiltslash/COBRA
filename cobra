@@ -72,6 +72,7 @@ class cobra:
                     if value.startswith("\"") and value.endswith("\""):
                         self.variables[name] = value
                     else:
+                        #TODO: ADD VARIABLE CHECKS
                         self.throwError(f"TRIED TO DECLARE VARIABLE TYPE STR, BUT VALUE WAS NOT WRAPPED IN DOUBLE QUOTES.")
     
     def throwError(self, message="THERE WAS AN UNEXPECTED ERROR.", color=tc.RED):
@@ -89,9 +90,12 @@ def main():
     for line in scriptlines:
         line = line.strip()
         if line != "":
+            if line.startswith("#" or "//"):
+                continue
             sectors = shlex.split(line)
             command = sectors[0]
             arguments = sectors[1:]
+            arguments = list(filter(lambda x: not x.startswith("//") and not x.startswith("#"), arguments) )
 
             # --- DEBUG --- #
             #print(sectors)
