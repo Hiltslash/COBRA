@@ -1,8 +1,8 @@
 show "Hello, World!" "RED"
 show "This is some blue text." "BLUE"
 show "And I'm green!" "green"
-show "And I'm yellow." "yeLLoW"
+show "And I'm yellow." yellow
 show ".... and i'm boring."
 
 #Comments are now supported :)
-let int skill = 100 #inline_comments-2-(at-least-with-dashes)
+let int skill = 100 #inline_comments-too-(at-least-with-dashes)

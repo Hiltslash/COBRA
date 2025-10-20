@@ -30,11 +30,20 @@ class cobra:
 
     def show(self, arguments):
         if len(arguments) == 2:
-            #print(arguments[1]) # -- DEBUG -- #
-            color = self.convertStringToColor(arguments[1])
-            print(color + arguments[0] + Style.RESET_ALL)
+            text = self.isString(arguments[0], mode=2)
+            if text is False:
+                self.throwError("STRING ARGUMENTS MUST BE WRAPPED IN DOUBLE QUOTES.")
+            raw_color = arguments[1]
+            color_name = self.isString(raw_color, mode=2)
+            if color_name is False:
+                color_name = raw_color
+            color = self.convertStringToColor(color_name)
+            print(color + text + Style.RESET_ALL)
         elif len(arguments) == 1:
-            print(arguments[0])
+            text = self.isString(arguments[0], mode=2)
+            if text is False:
+                self.throwError("STRING ARGUMENTS MUST BE WRAPPED IN DOUBLE QUOTES.")
+            print(text)
         else:
             self.throwError(f"KEYWORD SHOW REQUIRES 1, TAKES 2 ARGUMENTS, {len(arguments)} GIVEN.")
 
@@ -79,28 +88,42 @@ class cobra:
         msg = "ERROR!\n\n" + message + "\n\nERROR!"
         print(color + msg + Style.RESET_ALL)
         exit(1)
+    
+    def isString(self:cobra, string: str, mode:int=1):
+        if mode == 1: # Mode 1: returns a boolean. (is it wrapped in double quotes)
+            if string.startswith("\"") and string.endswith("\""):
+                return True
+            return False
+        elif mode == 2: # Mode 2: returns a python string. (strips the original str of its quotes)
+            if string.startswith("\"") and string.endswith("\""):
+                return string[1:len(string)-1]
+            return False
+    
 
 src = arguments[1]
 scriptlines = loadFile(src)
 
 def main():
     global scriptlines
+    currentline = 0
     Cobra = cobra()
     
     for line in scriptlines:
+        currentline += 1
         line = line.strip()
         if line != "":
             if line.startswith("#" or "//"):
                 continue
-            sectors = shlex.split(line)
+            sectors = shlex.split(line, posix=False)
             command = sectors[0]
             arguments = sectors[1:]
             arguments = list(filter(lambda x: not x.startswith("//") and not x.startswith("#"), arguments) )
 
             # --- DEBUG --- #
-            #print(sectors)
-            #print(command)
-            #print(arguments)
+            #print("Sectors:", sectors)
+            #print("Command:", command)
+            #print("Arguments:", arguments)
+            #print("Current Line:", currentline)
 
 
             if command in Cobra.commands:
@@ -111,4 +134,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
