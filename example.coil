@@ -1,8 +1,13 @@
-show "Hello, World!" "RED"
-show "This is some blue text." "BLUE"
-show "And I'm green!" "green"
-show "And I'm yellow." yellow
-show ".... and i'm boring."
+show "Hello, World" red
+show "This is some blue text." blue
+show "And I'm green!" green
+show "And I'm yellow." yelLoW
+show ".... and i'm boring." // As you can see, color constants aren't case sensitive.
+
 
 #Comments are now supported :)
-let int skill = 100 #inline_comments-too-(at-least-with-dashes)
+let int skill = 100 // Inline comments too.
+let int idk = -1 # Idk, the most descriptive variable name ever created :)
+// i am a comment heheheha
+
+

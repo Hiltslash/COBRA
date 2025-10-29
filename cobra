@@ -37,8 +37,12 @@ class cobra:
             color_name = self.isString(raw_color, mode=2)
             if color_name is False:
                 color_name = raw_color
-            color = self.convertStringToColor(color_name)
+            else:
+                self.throwError("EXPECTED COLOR CONSTANT, GOT STRING")
+
+            color = self.convertStringToColor(color_name) # You did it. You avoided all the errors, provided all the right arguments, and used correct syntax. You printed a message to the console. A winner is you. #
             print(color + text + Style.RESET_ALL)
+
         elif len(arguments) == 1:
             text = self.isString(arguments[0], mode=2)
             if text is False:
@@ -56,6 +60,10 @@ class cobra:
             return tc.GREEN
         elif string.lower() == "yellow":
             return tc.YELLOW
+        elif string.lower() == "purple":
+            return tc.MAGENTA
+        elif string.lower() == "cyan":
+            return tc.CYAN
         
     def let(self, arguments):
         if len(arguments) != 4:
@@ -81,8 +89,14 @@ class cobra:
                     if value.startswith("\"") and value.endswith("\""):
                         self.variables[name] = value
                     else:
-                        #TODO: ADD VARIABLE CHECKS
-                        self.throwError(f"TRIED TO DECLARE VARIABLE TYPE STR, BUT VALUE WAS NOT WRAPPED IN DOUBLE QUOTES.")
+                        if value in self.variables:
+                            source_value = self.variables[value]
+                            if isinstance(source_value, str):
+                                self.variables[name] = source_value
+                            else:
+                                self.throwError(f"TRIED TO DECLARE VARIABLE TYPE STR, BUT SOURCE VARIABLE {value} IS NOT TYPE STR.")
+                        else:
+                            self.throwError(f"TRIED TO DECLARE VARIABLE TYPE STR, BUT VALUE WAS NOT WRAPPED IN DOUBLE QUOTES.")
     
     def throwError(self, message="THERE WAS AN UNEXPECTED ERROR.", color=tc.RED):
         msg = "ERROR!\n\n" + message + "\n\nERROR!"
@@ -105,7 +119,7 @@ scriptlines = loadFile(src)
 
 def main():
     global scriptlines
-    currentline = 0
+    currentline = 0 
     Cobra = cobra()
     
     for line in scriptlines:
@@ -114,16 +128,29 @@ def main():
         if line != "":
             if line.startswith("#" or "//"):
                 continue
-            sectors = shlex.split(line, posix=False)
-            command = sectors[0]
-            arguments = sectors[1:]
-            arguments = list(filter(lambda x: not x.startswith("//") and not x.startswith("#"), arguments) )
+            try:
+                sectors = shlex.split(line, posix=False)
+            except ValueError:
+                Cobra.throwError(f"Error parsing at line {currentline}", Cobra.convertStringToColor("purple"))
+
+            filtered_sectors = [] # yes, i ripped this straight out of old cobra.
+            for s in sectors:
+                if s.startswith("//") or s.startswith("#"):
+                    break  # Ignore everything after this
+                filtered_sectors.append(s)
+            if not filtered_sectors:
+                continue
+
+            command = filtered_sectors[0]
+            arguments = filtered_sectors[1:]
 
             # --- DEBUG --- #
             #print("Sectors:", sectors)
             #print("Command:", command)
             #print("Arguments:", arguments)
             #print("Current Line:", currentline)
+
+            
 
 
             if command in Cobra.commands:
